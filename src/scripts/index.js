@@ -1,8 +1,11 @@
 import { getUser} from './services/user.js'
 import { getRepos} from './services/repositories.js'
 import { getEvents} from './services/events.js'
+import { getFollowers} from './services/followers.js'
+import { getFollowing} from './services/following.js'
 import { user} from './objects/user.js'
 import { screen } from './objects/screen.js'
+
 
 document.getElementById('btn-search').addEventListener('click', () => {
     const userName = document.getElementById('input-search').value
@@ -35,10 +38,14 @@ async function getUserData(userName) {
          return
      }
      const repositoriesResponse = await getRepos(userName)
-     user.setInfo(userResponse)
-     user.setRepositories(repositoriesResponse)
      const eventsResponse = await getEvents(userName)
-     user.setEvents(eventsResponse)
+     const filteredEvents = eventsResponse.filter(event=>
+        event.type === 'PushEvent' || event.type ==='CreateEvent'
+    );
+    
+    user.setInfo(userResponse)
+    user.setRepositories(repositoriesResponse)
+    user.setEvents(eventsResponse)
 
      screen.renderUser(user)
 }
